@@ -42,7 +42,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
       text: `SELECT 
                 t.id, t.title, t.body, t.created_at AS date, u.username 
               FROM threads t
-              INNER JOIN users u ON t.owner = u.id
+              LEFT JOIN users u ON t.owner = u.id
               WHERE t.id = $1`,
       values: [id],
     };
@@ -55,7 +55,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
       text: `SELECT 
                c.id, u.username, c.created_at AS date, c.content
               FROM comments c
-              INNER JOIN users u ON c.owner = u.id
+              LEFT JOIN users u ON c.owner = u.id
               WHERE c.thread_id = $1`,
       values: [id],
     };

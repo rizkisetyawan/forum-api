@@ -46,10 +46,6 @@ describe('AddThreadUseCase', () => {
       })
     );
 
-    // expect(mockUserRepository.verifyAvailableUsername).toBeCalledWith(
-    //   useCasePayload.username
-    // );
-    // expect(mockPasswordHash.hash).toBeCalledWith(useCasePayload.password);
     expect(mockThreadRepository.addThread).toBeCalledWith(
       new AddThread({
         title: useCasePayload.title,
