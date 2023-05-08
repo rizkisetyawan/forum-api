@@ -17,6 +17,43 @@ describe('/threads endpoint', () => {
     await ThreadsTableTestHelper.cleanTable();
   });
 
+  describe('when GET /threads', () => {
+    it('should response 404 if thread not found', async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: 'GET',
+        url: '/threads/xxx',
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toBeDefined();
+    });
+
+    it('should response 200 and get thread', async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      await ThreadsTableTestHelper.addThreads({ id: 'thread-1' });
+      const response = await server.inject({
+        method: 'GET',
+        url: '/threads/thread-1',
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data).toBeDefined();
+    });
+  });
+
   describe('when POST /threads', () => {
     it('should response 401 if No Authentication', async () => {
       // Arrange & Action

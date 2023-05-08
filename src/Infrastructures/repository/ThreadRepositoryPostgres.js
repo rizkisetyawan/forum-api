@@ -47,6 +47,9 @@ class ThreadRepositoryPostgres extends ThreadRepository {
       values: [id],
     };
     const result = await this._pool.query(query);
+    if (!result.rows[0]) {
+      throw new NotFoundError('thread tidak tersedia');
+    }
     return result.rows[0];
   }
 
