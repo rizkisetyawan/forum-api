@@ -41,6 +41,19 @@ describe('/threads endpoint', () => {
 
       // Action
       await ThreadsTableTestHelper.addThreads({ id: 'thread-1' });
+      await ThreadsTableTestHelper.addComment({
+        id: 'comment-1',
+        thread_id: 'thread-1',
+        owner: 'user-1',
+        content: 'testing',
+      });
+      await ThreadsTableTestHelper.addComment({
+        id: 'comment-2',
+        thread_id: 'thread-1',
+        owner: 'user-1',
+        content: 'testing 2',
+      });
+      await ThreadsTableTestHelper.deleteComment('comment-2');
       const response = await server.inject({
         method: 'GET',
         url: '/threads/thread-1',
@@ -50,7 +63,12 @@ describe('/threads endpoint', () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(200);
       expect(responseJson.status).toEqual('success');
-      expect(responseJson.data).toBeDefined();
+      expect(responseJson.data.thread).toBeDefined();
+      expect(responseJson.data.thread.comments).toBeDefined();
+      expect(responseJson.data.thread.comments[0].content).toEqual('testing');
+      expect(responseJson.data.thread.comments[1].content).toEqual(
+        '**komentar telah dihapus**'
+      );
     });
   });
 

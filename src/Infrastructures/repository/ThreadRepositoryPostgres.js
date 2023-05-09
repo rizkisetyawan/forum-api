@@ -56,7 +56,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
   async getComments(id) {
     const query = {
       text: `SELECT 
-               c.id, u.username, c.created_at AS date, c.content
+               c.id, u.username, c.created_at AS date, c.content, c.is_delete
               FROM comments c
               LEFT JOIN users u ON c.owner = u.id
               WHERE c.thread_id = $1`,
@@ -71,8 +71,8 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     const id = `comment-${this._idGenerator()}`;
     const date = new Date().toISOString();
     const query = {
-      text: 'INSERT INTO comments VALUES($1, $2, $3, $4, $5) RETURNING id, content, owner',
-      values: [id, threadId, content, owner, date],
+      text: 'INSERT INTO comments VALUES($1, $2, $3, $4, $5, $6) RETURNING id, content, owner',
+      values: [id, threadId, content, owner, false, date],
     };
 
     const result = await this._pool.query(query);
@@ -106,8 +106,8 @@ class ThreadRepositoryPostgres extends ThreadRepository {
 
   async deleteComment(id) {
     const query = {
-      text: 'UPDATE comments SET content=$1 WHERE id=$2 RETURNING *',
-      values: ['**komentar telah dihapus**', id],
+      text: 'UPDATE comments SET is_delete=$1 WHERE id=$2 RETURNING *',
+      values: [true, id],
     };
 
     const result = await this._pool.query(query);

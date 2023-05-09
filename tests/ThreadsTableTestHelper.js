@@ -24,9 +24,18 @@ const ThreadsTableTestHelper = {
     created_at = new Date().toISOString(),
   }) {
     const query = {
-      text: 'INSERT INTO comments VALUES($1, $2, $3, $4, $5) RETURNING *',
-      values: [id, thread_id, content, owner, created_at],
+      text: 'INSERT INTO comments VALUES($1, $2, $3, $4, $5, $6) RETURNING *',
+      values: [id, thread_id, content, owner, false, created_at],
     };
+    await pool.query(query);
+  },
+
+  async deleteComment(id) {
+    const query = {
+      text: 'UPDATE comments SET is_delete=$1 WHERE id=$2 RETURNING *',
+      values: [true, id],
+    };
+
     await pool.query(query);
   },
 
