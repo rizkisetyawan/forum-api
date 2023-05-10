@@ -1,17 +1,16 @@
-// const AddCommentThread = require('../../Domains/threads/entities/AddCommentThread');
-
 class DeleteCommentThreadUseCase {
-  constructor({ threadRepository }) {
+  constructor({ threadRepository, commentRepository }) {
     this._threadRepository = threadRepository;
+    this._commentRepository = commentRepository;
   }
 
   async execute(useCasePayload) {
     this._validatePayload(useCasePayload);
     const { threadId, commentId, owner } = useCasePayload;
     await this._threadRepository.verifyAvailableThread(threadId);
-    await this._threadRepository.verifyAvailableComment(commentId);
-    await this._threadRepository.verifyCommentOwner(commentId, owner);
-    await this._threadRepository.deleteComment(commentId);
+    await this._commentRepository.verifyAvailableComment(commentId);
+    await this._commentRepository.verifyCommentOwner(commentId, owner);
+    await this._commentRepository.deleteComment(commentId);
   }
 
   _validatePayload(payload) {

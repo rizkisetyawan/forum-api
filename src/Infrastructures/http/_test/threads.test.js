@@ -2,9 +2,9 @@ const pool = require('../../database/postgres/pool');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const AuthenticationsTableTestHelper = require('../../../../tests/AuthenticationsTableTestHelper');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
+const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const container = require('../../container');
 const createServer = require('../createServer');
-const AuthenticationTokenManager = require('../../../Applications/security/AuthenticationTokenManager');
 
 describe('/threads endpoint', () => {
   afterAll(async () => {
@@ -15,6 +15,7 @@ describe('/threads endpoint', () => {
     await UsersTableTestHelper.cleanTable();
     await AuthenticationsTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
+    await CommentsTableTestHelper.cleanTable();
   });
 
   describe('when GET /threads', () => {
@@ -41,19 +42,19 @@ describe('/threads endpoint', () => {
 
       // Action
       await ThreadsTableTestHelper.addThreads({ id: 'thread-1' });
-      await ThreadsTableTestHelper.addComment({
+      await CommentsTableTestHelper.addComment({
         id: 'comment-1',
         thread_id: 'thread-1',
         owner: 'user-1',
         content: 'testing',
       });
-      await ThreadsTableTestHelper.addComment({
+      await CommentsTableTestHelper.addComment({
         id: 'comment-2',
         thread_id: 'thread-1',
         owner: 'user-1',
         content: 'testing 2',
       });
-      await ThreadsTableTestHelper.deleteComment('comment-2');
+      await CommentsTableTestHelper.deleteComment('comment-2');
       const response = await server.inject({
         method: 'GET',
         url: '/threads/thread-1',
@@ -346,7 +347,7 @@ describe('/threads endpoint', () => {
       });
       const responseTokenJson = JSON.parse(responseToken.payload);
       await ThreadsTableTestHelper.addThreads({ id: 'thread-1' });
-      await ThreadsTableTestHelper.addComment({
+      await CommentsTableTestHelper.addComment({
         id: 'comment-1',
         thread_id: 'thread-1',
         owner: 'user-1',
@@ -385,7 +386,7 @@ describe('/threads endpoint', () => {
       });
       const responseTokenJson = JSON.parse(responseToken.payload);
       await ThreadsTableTestHelper.addThreads({ id: 'thread-1' });
-      await ThreadsTableTestHelper.addComment({
+      await CommentsTableTestHelper.addComment({
         id: 'comment-1',
         thread_id: 'thread-1',
         owner: 'user-1',

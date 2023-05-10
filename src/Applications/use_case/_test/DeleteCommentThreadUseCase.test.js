@@ -1,5 +1,6 @@
 const DeleteCommentThreadUseCase = require('../DeleteCommentThreadUseCase');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
+const CommentRepository = require('../../../Domains/comments/CommentRepository');
 
 describe('DeleteCommentThreadUseCase', () => {
   it('should throw error if use case payload not contain payload properly', async () => {
@@ -23,21 +24,24 @@ describe('DeleteCommentThreadUseCase', () => {
       owner: 'user-123',
     };
     const mockThreadRepository = new ThreadRepository();
+    const mockCommentRepository = new CommentRepository();
+
     mockThreadRepository.verifyAvailableThread = jest
       .fn()
       .mockImplementation(() => Promise.resolve());
-    mockThreadRepository.verifyAvailableComment = jest
+    mockCommentRepository.verifyAvailableComment = jest
       .fn()
       .mockImplementation(() => Promise.resolve());
-    mockThreadRepository.verifyCommentOwner = jest
+    mockCommentRepository.verifyCommentOwner = jest
       .fn()
       .mockImplementation(() => Promise.resolve());
-    mockThreadRepository.deleteComment = jest
+    mockCommentRepository.deleteComment = jest
       .fn()
       .mockImplementation(() => Promise.resolve());
 
     const deleteCommentThreadUseCase = new DeleteCommentThreadUseCase({
       threadRepository: mockThreadRepository,
+      commentRepository: mockCommentRepository,
     });
 
     // Act
@@ -47,14 +51,14 @@ describe('DeleteCommentThreadUseCase', () => {
     expect(mockThreadRepository.verifyAvailableThread).toHaveBeenCalledWith(
       useCasePayload.threadId
     );
-    expect(mockThreadRepository.verifyAvailableComment).toHaveBeenCalledWith(
+    expect(mockCommentRepository.verifyAvailableComment).toHaveBeenCalledWith(
       useCasePayload.commentId
     );
-    expect(mockThreadRepository.verifyCommentOwner).toHaveBeenCalledWith(
+    expect(mockCommentRepository.verifyCommentOwner).toHaveBeenCalledWith(
       useCasePayload.commentId,
       useCasePayload.owner
     );
-    expect(mockThreadRepository.deleteComment).toHaveBeenCalledWith(
+    expect(mockCommentRepository.deleteComment).toHaveBeenCalledWith(
       useCasePayload.commentId
     );
   });
